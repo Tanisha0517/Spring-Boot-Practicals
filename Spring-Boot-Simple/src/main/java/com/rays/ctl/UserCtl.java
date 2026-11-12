@@ -1,5 +1,7 @@
 package com.rays.ctl;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rays.common.BaseCtl;
@@ -22,7 +25,7 @@ import com.rays.service.UserService;
 public class UserCtl extends BaseCtl {
 
 	@Autowired
-	private UserService service;
+	private UserService userService;
 
 	@PostMapping("save")
 	public Response save(@RequestBody @Valid UserForm form, BindingResult bindingResult) {
@@ -36,14 +39,19 @@ public class UserCtl extends BaseCtl {
 
 		UserDTO dto = (UserDTO) form.getDto();
 
-		if (dto.getId() != null && dto.getId() > 0) {
-			service.update(dto);
-			res.addMessage("user updated successfully");
-			res.addData(dto);
-		} else {
-			service.add(dto);
-			res.addMessage("user added successfully");
-			res.addData(dto);
+		try {
+			if (dto.getId() != null && dto.getId() > 0) {
+				userService.update(dto);
+				res.addMessage("user updated successfully");
+				res.addData(dto);
+			} else {
+				userService.add(dto);
+				res.addMessage("user added successfully");
+				res.addData(dto);
+			}
+		} catch (Exception e) {
+			res.setSuccess(false);
+			res.addMessage(e.getMessage());
 		}
 
 		return res;
@@ -56,9 +64,9 @@ public class UserCtl extends BaseCtl {
 		Response res = new Response();
 
 		for (long id : ids) {
-			service.delete(id);
+			userService.delete(id);
 			res.setSuccess(true);
-			res.addMessage("user record deleted successfully");
+			res.addMessage("record deleted successfully");
 		}
 
 		return res;
@@ -70,17 +78,81 @@ public class UserCtl extends BaseCtl {
 
 		Response res = new Response();
 
-		UserDTO dto = service.findByPk(id);
+		UserDTO dto = userService.findByPk(id);
 
 		if (dto != null) {
 			res.addData(dto);
 			res.setSuccess(true);
 		} else {
-			res.addMessage("user record not found");
+			res.addMessage("record not found");
 		}
 
 		return res;
 
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/search/{pageNo}")
+	public Response search(@RequestBody UserForm form, @PathVariable int pageNo) {
+
+		Response res = new Response();
+
+		int pageSize = 5;
+
+		UserDTO dto = (UserDTO) form.getDto();
+
+		List<UserDTO> list = userService.search(dto, pageNo, pageSize);
+
+		if (list != null) {
+			res.addData(list);
+			res.setSuccess(true);
+		} else {
+			res.addMessage("record not found");
+		}
+
+		return res;
+
+	}
+	
+	//y bhi kr skte h
+
+//	@GetMapping("findByUniqueKey/{login}")
+//	public Response findByUniqueKey(@PathVariable String login) {
+//
+//		Response res = new Response();
+//
+//		UserDTO dto = userService.findByUniqueKey("login", login);
+//
+//		if (dto != null) {
+//			res.setSuccess(true);
+//			res.addData(dto);
+//			res.addMessage("User found successfully");
+//		} else {
+//			res.setSuccess(false);
+//			res.addMessage("User not found");
+//		}
+//
+//		return res;
+//	}
+
+	@PostMapping("findByLogin")
+	public Response findByLogin(@RequestBody UserForm form) {
+
+		Response res = new Response();
+
+		UserDTO dto = (UserDTO) form.getDto();
+
+		UserDTO user = userService.findByLogin(dto.getLogin());
+
+		if (user != null) {
+			res.setSuccess(true);
+			res.addData(user);
+			res.addMessage("User found successfully");
+		} else {
+			res.setSuccess(false);
+			res.addMessage("User not found");
+		}
+
+		return res;
 	}
 
 }

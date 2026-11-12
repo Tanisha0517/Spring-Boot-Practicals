@@ -10,10 +10,10 @@ import com.rays.common.BaseDTO;
 @Table(name = "st_user")
 public class UserDTO extends BaseDTO {
 
-	@Column(name = "FIRSTNAME")
+	@Column(name = "FIRST_NAME")
 	private String firstName;
 
-	@Column(name = "LASTNAME")
+	@Column(name = "LAST_NAME")
 	private String lastName;
 
 	@Column(name = "LOGIN")
@@ -22,10 +22,10 @@ public class UserDTO extends BaseDTO {
 	@Column(name = "PASSWORD")
 	private String password;
 
-	@Column(name = "ROLEID")
+	@Column(name = "ROLE_ID")
 	private Long roleId;
 	
-	@Column(name = "ROLENAME")
+	@Column(name = "ROLE_NAME")
 	private String roleName;
 
 	public String getFirstName() {
