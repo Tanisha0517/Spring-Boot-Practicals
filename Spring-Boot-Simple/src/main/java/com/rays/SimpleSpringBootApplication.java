@@ -12,8 +12,8 @@ import com.rays.common.FrontCtl;
 @SpringBootApplication
 public class SimpleSpringBootApplication {
 
-	@Autowired
-	private FrontCtl frontCtl;
+//	@Autowired
+//	private FrontCtl frontCtl;
 
 	public static void main(String[] args) {
 
@@ -23,16 +23,16 @@ public class SimpleSpringBootApplication {
 
 	}
 
-	@Bean
-	public WebMvcConfigurer webConfig() {
-
-		return new WebMvcConfigurer() {
-			@Override
-			public void addInterceptors(InterceptorRegistry registry) {
-				registry.addInterceptor(frontCtl).addPathPatterns("/**").excludePathPatterns("/Auth/*");
-			}
-		};
-
-	}
+//	@Bean
+//	public WebMvcConfigurer webConfig() {
+//
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addInterceptors(InterceptorRegistry registry) {
+//				registry.addInterceptor(frontCtl).addPathPatterns("/**").excludePathPatterns("/Auth/*");
+//			}
+//		};
+//
+//	}
 
 }
